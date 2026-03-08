@@ -1,10 +1,10 @@
 // --- Maps for fonts ---
 const smallCapsMap = {
-  a:'𝗔', b:'𝗕', c:'𝗖', d:'𝗗', e:'𝗘', f:'𝗙',
-  g:'𝗚', h:'𝗛', i:'𝗜', j:'𝗝', k:'𝗞', l:'𝗟',
-  m:'𝗠', n:'𝗡', o:'𝗢', p:'𝗣', q:'𝗤', r:'𝗥',
-  s:'𝗦', t:'𝗧', u:'𝗨', v:'𝗩', w:'𝗪', x:'𝗫',
-  y:'𝗬', z:'𝗭'
+  a:'𝙰', b:'𝙱', c:'𝙲', d:'𝙳', e:'𝙴', f:'𝙵',
+  g:'𝙶', h:'𝙷', i:'𝙸', j:'𝙹', k:'𝙺', l:'𝙻',
+  m:'𝙼', n:'𝙽', o:'𝙾', p:'𝙿', q:'𝚀', r:'𝚁',
+  s:'𝚂', t:'𝚃', u:'𝚄', v:'𝚅', w:'𝚆', x:'𝚇',
+  y:'𝚈', z:'𝚉'
 };
 
 const cmdFontMap = {
@@ -24,7 +24,7 @@ module.exports = {
     name: "help",
     aliases: ["menu"],
     version: "6.0",
-    author: "𝗯𝗯𝘇",
+    author: "𝗧𝗮𝗺𝗶𝗺 𝗕𝗯𝘇",
     shortDescription: "Show all available commands",
     longDescription: "Displays a categorized command list.",
     category: "system",
@@ -96,13 +96,13 @@ module.exports = {
 
       // Removed attachment property
       return message.reply(
-          `🌸 𝗖𝗢𝗠𝗠𝗔𝗡𝗗 𝗜𝗡𝗙𝗢 🌸\n\n` +
-          `🎀 Name: ${name}\n\n` +
-          `🎀 Category: ${category || "Uncategorized"}\n\n` +
-          `🎀 Description: ${desc}\n\n` +
-          `🎀 Aliases: ${aliases?.length ? aliases.join(", ") : "None"}\n\n` +
-          `🎀 Usage: ${usage}\n\n` +
-          `🎀 Version: ${version || "1.0"}`
+          ` 𝗖𝗢𝗠𝗠𝗔𝗡𝗗 𝗜𝗡𝗙𝗢 🌸\n\n` +
+          `📘 𝗡𝗮𝗺𝗲: ${name}\n\n` +
+          `🗂️ 𝗖𝗮𝘁𝗲𝗴𝗼𝗿𝘆: ${category || "Uncategorized"}\n\n` +
+          `📄 𝗗𝗲𝘀𝗰𝗲𝗿𝗶𝗽𝘁𝗶𝗼𝗻: ${desc}\n\n` +
+          `🧩 𝗔𝗹𝗶𝗮𝘀𝗲𝘀: ${aliases?.length ? aliases.join(", ") : "None"}\n\n` +
+          `🎀 𝗨𝘀𝗮𝗴𝗲: ${usage}\n\n` +
+          `⚙️ 𝗩𝗲𝗿𝘀𝗶𝗼𝗻: ${version || "1.0"}`
       );
     }
 
@@ -124,8 +124,8 @@ module.exports = {
     msg +=
       `┍━━━━━━━━━━━━━━━𒐬\n` +
       ` 𓊈🎀𓊉 ᴛᴏᴛᴀʟ ᴄᴏᴍᴍᴀɴᴅꜱ: ${allCommands.size - 1}\n` +
-      ` 𓊈🔑𓊉 ᴘʀᴇꜰɪx: ${prefix}\n` +
-      ` 𓊈👑𓊉 𝗢𝗪𝗡𝗘𝗥: 𝗧𝗮𝗺𝗶𝗺 𝗕𝗯𝘇y 🍓\n` +
+      ` 𓊈🔑𓊉 𝗣𝗿𝗲𝗳𝗶𝘅  : ${prefix}\n` +
+      ` 𓊈👑𓊉 𝗢𝗪𝗡𝗘𝗥: 𝗧𝗮𝗺𝗶𝗺 𝗕𝗯𝘇 🍓\n` +
       `┕━━━━━━━━━━━━━━━𒐬`;
 
     // Removed attachment property
