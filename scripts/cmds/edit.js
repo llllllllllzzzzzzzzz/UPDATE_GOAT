@@ -1,135 +1,85 @@
-const axios = require('axios');
-const fs = require('fs-extra'); 
-const path = require('path');
+const axios = require("axios");
+const fs = require("fs-extra");
+const path = require("path");
 
-const API_ENDPOINT = "https://dev.oculux.xyz/api/gptimage"; 
-const SEED_FLAG = "--seed";
-const WIDTH_FLAG = "--width";
-const HEIGHT_FLAG = "--height";
+const apiUrl = "https://raw.githubusercontent.com/Saim-x69x/sakura/main/ApiUrl.json";
+
+async function getApiUrl() {
+  const res = await axios.get(apiUrl);
+  return res.data.apiv3;
+}
+
+async function urlToBase64(url) {
+  const res = await axios.get(url, { responseType: "arraybuffer" });
+  return Buffer.from(res.data).toString("base64");
+}
 
 module.exports = {
   config: {
     name: "edit",
-    aliases: ["editimg","edt"],
-    version: "1.2", 
-    author: "SiFu ゐ",
-    countDown: 20,
+    version: "1.0",
+    author: "Saimx69x",// 𝗙𝗶𝘅𝗲𝗱 𝗯𝘆 𝗧𝗮𝗺𝗶𝗺 𝗕𝗯𝘇
+    countDown: 5,
+    premium: true,
     role: 0,
-    longDescription: "Generate or edit an image using AI. Reply to an image to edit it.",
-    category: "ai-image",
-    guide: {
-      en: 
-        "{pn} <prompt> [--seed <number>] [--width <px>] [--height <px>]\n" +
-        "• ɢᴇɴᴇʀᴀᴛᴇ: {pn} a cybernetic forest\n" +
-        "• ᴇᴅɪᴛ: Reply to an image with {pn} change hair color to blue\n" +
-        "• ᴏᴘᴛɪᴏɴs: {pn} a cat --seed 777 --width 1024"
-    }
+    shortDescription: "Edit an image using text prompt",
+    longDescription: "Only edits an existing image. Must reply to an image.",
+    guide: "{p}edit <prompt> (reply to an image)"
   },
 
-  onStart: async function({ message, args, event }) {
-    let prompt = args.join(" ");
-    let refUrl = null;
-    let seed = null;
-    let width = null;
-    let height = null;
+  ncStart: async function ({ api, event, args, message }) {
+    const repliedImage = event.messageReply?.attachments?.[0];
+    const prompt = args.join(" ").trim();
 
-    // 1. Detect if replying to an image (Edit Mode)
-    if (event.messageReply && event.messageReply.attachments && event.messageReply.attachments.length > 0) {
-      const imageAttachment = event.messageReply.attachments.find(att => att.type === 'photo' || att.type === 'image');
-      if (imageAttachment && imageAttachment.url) {
-        refUrl = imageAttachment.url;
-      }
+    if (!repliedImage || repliedImage.type !== "photo") {
+      return message.reply(
+        "❌ Please reply to an image to edit it.\n\nExample:\n/edit make it anime style"
+      );
     }
 
-    // 2. Extract Flags
-    const extractFlag = (flagName, regex) => {
-      const match = prompt.match(regex);
-      if (match && match[1]) {
-        prompt = prompt.replace(match[0], "").trim();
-        return match[1];
-      }
-      return null;
-    };
-
-    const seedValue = extractFlag(SEED_FLAG, new RegExp(`${SEED_FLAG}\\s+([^\\s]+)`, 'i'));
-    if (seedValue) {
-      if (seedValue.toLowerCase() === 'true') seed = true;
-      else if (seedValue.toLowerCase() === 'false') seed = false;
-      else if (!isNaN(parseInt(seedValue))) seed = parseInt(seedValue);
-    }
-
-    const widthValue = extractFlag(WIDTH_FLAG, new RegExp(`${WIDTH_FLAG}\\s+(\\d+)`, 'i'));
-    if (widthValue) width = parseInt(widthValue);
-
-    const heightValue = extractFlag(HEIGHT_FLAG, new RegExp(`${HEIGHT_FLAG}\\s+(\\d+)`, 'i'));
-    if (heightValue) height = parseInt(heightValue);
-
-    prompt = prompt.trim();
-
-    // 3. Validation
     if (!prompt) {
-        return message.reply("🎀 ᴘʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ ᴘʀᴏᴍᴘᴛ ᴏʀ ɪɴsᴛʀᴜᴄᴛɪᴏɴ.");
+      return message.reply("❌ Please provide an edit prompt.");
     }
-    
-    message.reaction("🧪", event.messageID);
-    let tempFilePath; 
+
+    const processingMsg = await message.reply("🖌️ 𝗘𝗱𝗶𝘁𝗶𝗻𝗴 𝗶𝗺𝗮𝗴𝗲....");
+
+    const imgPath = path.join(
+      __dirname,
+      "cache",
+      `${Date.now()}_edit.jpg`
+    );
 
     try {
-      // 4. Build API URL
-      let fullApiUrl = `${API_ENDPOINT}?prompt=${encodeURIComponent(prompt)}`;
-      
-      if (refUrl) fullApiUrl += `&ref=${encodeURIComponent(refUrl)}`;
-      if (seed !== null) fullApiUrl += `&seed=${seed}`;
-      if (width !== null) fullApiUrl += `&width=${width}`;
-      if (height !== null) fullApiUrl += `&height=${height}`;
-      
-      const response = await axios.get(fullApiUrl, {
-          responseType: 'stream',
-          timeout: 120000 
+      const API_URL = await getApiUrl();
+
+      const payload = {
+        prompt: `Edit the given image based on this description:\n${prompt}`,
+        images: [await urlToBase64(repliedImage.url)],
+        format: "jpg"
+      };
+
+      const res = await axios.post(API_URL, payload, {
+        responseType: "arraybuffer",
+        timeout: 180000
       });
 
-      if (response.status !== 200) {
-           throw new Error(`ᴀᴘɪ ʀᴇsᴘᴏɴᴅᴇᴅ ᴡɪᴛʜ sᴛᴀᴛᴜs: ${response.status}`);
-      }
-      
-      const cacheDir = path.join(__dirname, 'cache');
-      if (!fs.existsSync(cacheDir)) {
-          await fs.mkdirp(cacheDir); 
-      }
-      
-      tempFilePath = path.join(cacheDir, `gpt_ai_${Date.now()}.png`);
-      const writer = fs.createWriteStream(tempFilePath);
-      response.data.pipe(writer);
+      await fs.ensureDir(path.dirname(imgPath));
+      await fs.writeFile(imgPath, Buffer.from(res.data));
 
-      await new Promise((resolve, reject) => {
-        writer.on("finish", resolve);
-        writer.on("error", reject);
-      });
-
-      // 5. Success Message
-      message.reaction("🎀", event.messageID);
-      const msgBody = refUrl 
-        ? "✨ ɪᴍᴀɢᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴇᴅɪᴛᴇᴅ!" 
-        : "✨ ɪᴍᴀɢᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ɢᴇɴᴇʀᴀᴛᴇᴅ!";
+      await api.unsendMessage(processingMsg.messageID);
 
       await message.reply({
-        body: `『 ${msgBody} 』`,
-        attachment: fs.createReadStream(tempFilePath)
+        body: `✅ 𝗜𝗺𝗮𝗴𝗲 𝗲𝗱𝗶𝘁𝗲𝗱 𝘀𝘂𝗰𝗰𝗲𝘀𝘀𝗳𝘂𝗹𝗹𝘆\nPrompt: ${prompt}`,
+        attachment: fs.createReadStream(imgPath)
       });
 
     } catch (error) {
-      message.reaction("❌", event.messageID);
-      console.error("GPT Image Error:", error);
-
-      let errMsg = "ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ ᴡʜɪʟᴇ ᴘʀᴏᴄᴇssɪɴɢ ʏᴏᴜʀ ɪᴍᴀɢᴇ.";
-      if (error.code === 'ETIMEDOUT') {
-        errMsg = "ᴛʜᴇ sᴇʀᴠᴇʀ ᴛᴏᴏᴋ ᴛᴏᴏ ʟᴏɴɢ ᴛᴏ ʀᴇsᴘᴏɴᴅ. ᴘʟᴇᴀsᴇ ᴛʀʏ ᴀɢᴀɪɴ.";
-      }
-
-      message.reply(`❌ ᴇʀʀᴏʀ: ${errMsg}`);
+      console.error("𝗘𝗱𝗶𝘁 𝗘𝗿𝗿𝗼𝗿:", error?.response?.data || error.message);
+      await api.unsendMessage(processingMsg.messageID);
+      message.reply("❌ 𝗙𝗮𝗶𝗹𝗱 𝘁𝗼 𝗲𝗱𝗶𝘁 𝗶𝗺𝗮𝗴𝗲..𝗧𝗿𝘆 𝗮𝗴𝗮𝗶𝗻 𝗹𝗮𝘁𝗲𝗿.");
     } finally {
-      if (tempFilePath && fs.existsSync(tempFilePath)) {
-          try { await fs.unlink(tempFilePath); } catch(e) {}
+      if (fs.existsSync(imgPath)) {
+        await fs.remove(imgPath);
       }
     }
   }
