@@ -27,7 +27,7 @@ module.exports = {
     guide: "{p}edit <prompt> (reply to an image)"
   },
 
-  ncStart: async function ({ api, event, args, message }) {
+  onStart: async function ({ api, event, args, message }) {
     const repliedImage = event.messageReply?.attachments?.[0];
     const prompt = args.join(" ").trim();
 
