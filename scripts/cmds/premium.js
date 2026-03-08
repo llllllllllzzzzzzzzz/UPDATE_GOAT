@@ -4,9 +4,9 @@ const { writeFileSync } = require("fs-extra");
 module.exports = {
         config: {
                 name: "premium",
-                aliases: ["prem"],
+                aliases: ["prem", "pm"],
                 version: "1.1",
-                author: "NeoKEX",
+                author: "NeoKEX",// 𝗙𝗶𝘅𝗲𝗱 𝗯𝘆 𝗧𝗮𝗺𝗶𝗺 𝗕𝗯𝘇
                 countDown: 5,
                 role: 2,
                 description: {
