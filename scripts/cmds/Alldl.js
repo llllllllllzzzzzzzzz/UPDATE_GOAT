@@ -1,195 +1,114 @@
 const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
-
-const supportedDomains = [
-  { domain: 'facebook.com', cookieFile: null },
-  { domain: 'instagram.com', cookieFile: 'insta.txt' },
-  { domain: 'youtube.com', cookieFile: 'yt.txt' },
-  { domain: 'youtu.be', cookieFile: 'yt.txt' },
-  { domain: 'pinterest.com', cookieFile: null },
-  { domain: "tiktok.com", cookieFile: null },
-];
-
-function getMainDomain(url) {
-  try {
-    const hostname = new URL(url).hostname;
-    if (hostname === 'youtu.be') {
-      return 'youtube.com';
-    }
-    const parts = hostname.split('.');
-    if (parts.length > 2) {
-      return parts.slice(-2).join('.');
-    }
-    return hostname;
-  } catch (e) {
-    return null;
-  }
-}
-
-function getDefaultCookie(domain) {
-  const domainEntry = supportedDomains.find(entry => entry.domain === domain);
-  return domainEntry ? domainEntry.cookieFile : null;
-}
-
-function parseArgs(args) {
-  const params = {};
-  args.forEach((arg, i) => {
-    if (arg.startsWith('--')) {
-      const key = arg.slice(2).toLowerCase();
-      const value = args[i + 1];
-      switch (key) {
-        case 'maxsize':
-        case 'ms':
-        case 'fs':
-          if (!isNaN(Number(value))) params.filesize = Number(value);
-          break;
-        case 'type':
-        case 'format':
-        case 'media':
-        case 'f':
-          if (['video', 'audio'].includes(value.toLowerCase())) {
-            params.format = value.toLowerCase();
-          }
-          break;
-        case 'cookie':
-        case 'cookies':
-        case 'c':
-          const cookiePath = path.join(process.cwd(), value);
-          if (fs.existsSync(cookiePath)) {
-            params.cookies = fs.readFileSync(cookiePath, 'utf-8');
-          }
-          break;
-        default:
-          break;
-      }
-    }
-  });
-  return params;
-}
-
-async function download({ url, params, message, event }) {
-  try {
-    const domain = getMainDomain(url);
-    
-    if (!params.cookies) {
-      const defaultCookieFile = getDefaultCookie(domain);
-      if (defaultCookieFile) {
-        const cookiePath = path.join(process.cwd(), defaultCookieFile);
-        if (fs.existsSync(cookiePath)) {
-          params.cookies = fs.readFileSync(cookiePath, 'utf-8');
-        }
-      }
-    }
-    
-    if (!params.filesize) {
-      params.filesize = 25;
-    }
-    
-    const requestBody = {
-      url,
-      ...(params.format && { format: params.format }),
-      ...(params.filesize && { filesize: params.filesize }),
-      ...(params.cookies && { cookies: params.cookies }),
-    };
-    
-    const apiUrl = (await axios.get('https://raw.githubusercontent.com/Tanvir0999/stuffs/refs/heads/main/raw/addresses.json')).data.megadl;
-    const response = await axios.post(apiUrl, requestBody);
-    const data = response.data;
-    
-    await message.reply({
-      body: `• ${data.title.length > 50 ? data.title.slice(0, 50) + "..." : data.title}\n• Duration: ${data.duration}\n• Upload Date: ${data.upload_date || '--'}\n• Source: ${data.source}\n\n• Stream: ${data.url}`,
-      attachment: await global.utils.getStreamFromUrl(data.url),
-    });
-    
-    message.reaction('✅', event.messageID);
-  } catch (error) {
-    message.reaction('❌', event.messageID);
-    return { repay: 50 };
-  }
-}
 
 module.exports = {
   config: {
-    name: 'download',
-    aliases: ['downloader', 'megadl', 'fb', 'fbdl', 'facebook', 'insta', 'instadl', 'instagram', 'yt', 'ytdl'],
-    version: '2.3',
-    author: 'tanvir',
-    countDown: 5,
+    name: "alldl",
+    version: "10.0",
+    author: "𝗧𝗮𝗺𝗶𝗺 𝗕𝗯𝘇",
+    countDown: 3,
     role: 0,
-    longDescription: 'Download videos or audios from supported platforms. Supports parameters for file size, format, and cookies.',
-    category: 'media',
-    guide: {
-      en: {
-        body: `{pn} [URL] [optional parameters]\n\n
-  # Examples:
-     • {pn} https://facebook.com/video --fs 100 --type audio --c cookies.txt\n
-     • {pn} https://youtube.com/watch?v=abc --maxsize 200 --format video\n
-     • {pn} https://instagram.com/p/xyz\n\n
-  # Parameters:
-     • URL: The video or audio URL from a supported platform.\n
-     • --fs or --maxsize: Maximum file size in MB (default: 25).\n
-     • --type or --format: Download type ('video' or 'audio', optional).\n
-     • --c or --cookie: Path to a cookie file (defaults based on platform).`,
-      },
-    },
+    shortDescription: "Ultra Fast Multi-Source Downloader",
+    longDescription: "Download videos with automatic retry and stream fix.",
+    category: "media",
+    guide: "{pn} <link> or just send the link"
   },
-  
-  onStart: async function({ message, args, event, threadsData, role }) {
-    if (args[0] === 'chat' && (args[1] === 'on' || args[1] === 'off') || args[0] === 'on' || args[0] === 'off') {
-      if (role < 1) {
-        return message.reply('You do not have permission to change auto-download settings.');
+
+  onStart: async function ({ api, event, args, message }) {
+    const url = args[0];
+    if (!url) return message.reply("⚠️ দয়া করে একটি ভিডিও লিঙ্ক দিন!");
+    return await this.handleDownload(url, api, event, message);
+  },
+
+  onChat: async function ({ api, event, message }) {
+    const { body, senderID } = event;
+    if (!body || senderID === api.getCurrentUserID()) return;
+
+    const linkRegEx = /(https?:\/\/[^\s]+)/g;
+    const match = body.match(linkRegEx);
+
+    if (match) {
+      const url = match[0];
+      const sites = ["tiktok.com", "facebook.com", "fb.watch", "instagram.com", "reels", "youtube.com", "youtu.be", "pinterest.com", "pin.it", "twitter.com", "x.com", "capcut.com"];
+      
+      if (sites.some(s => url.includes(s))) {
+        return await this.handleDownload(url, api, event, message);
       }
-      const choice = args[0] === 'on' || args[1] === 'on';
-      const gcData = await threadsData.get(event.threadID, "data");
-      await threadsData.set(event.threadID, { data: { ...gcData, autoDownload: choice } });
-      return message.reply(`Auto-download has been turned ${choice ? 'on' : 'off'} for this group.`);
     }
-    
-    const url = args.find(arg => /^https?:\/\//.test(arg));
-    if (!url) {
-      return message.reply('Please provide a valid URL to download.');
-    }
-    
-    const domain = getMainDomain(url);
-    const isSupported = supportedDomains.some(entry => entry.domain === domain);
-    if (!isSupported) {
-      return message.reply('This platform is not enabled/supported. Please ask Admin to request support of this platform.');
-    }
-    
-    const paramArgs = args.filter(arg => arg !== url);
-    const params = parseArgs(paramArgs);
-    
-    message.reaction('⏳', event.messageID);
-    await download({ url, params, message, event });
   },
-  
-  onChat: async function({ event, message, threadsData }) {
-    const threadData = await threadsData.get(event.threadID);
-    if (!threadData.data.autoDownload || threadData.data.autoDownload === false || event.senderID === global.botID) {
-      return;
-    }
-    
+
+  handleDownload: async function (url, api, event, message) {
+    const { messageID } = event;
+    const start = Date.now();
+
     try {
-      const urlRegex = /https:\/\/[^\s]+/;
-      const match = event.body.match(urlRegex);
-      if (match) {
-        const url = match[0];
-        const domain = getMainDomain(url);
-        
-        const isSupported = supportedDomains.some(entry => entry.domain === domain);
-        if (isSupported) {
-          const prefix = await global.utils.getPrefix(event.threadID);
-          if (event.body.startsWith(prefix)) return;
-          
-          message.reaction('⏳', event.messageID);
-          const params = {};
-          await download({ url, params, message, event });
-        }
+      if (api.setMessageReaction) api.setMessageReaction("⌛", messageID, () => {}, true);
+
+      let videoUrl, title, source = "Unknown";
+
+
+      if (url.includes("tiktok.com")) {
+        try {
+          const tikRes = await axios.get(`https://api.tiklydown.eu.org/api/download?url=${encodeURIComponent(url)}`);
+          videoUrl = tikRes.data.video.noWatermark || tikRes.data.video.watermark;
+          title = tikRes.data.title;
+          source = "TikTok";
+        } catch (e) {}
       }
-    } catch (error) {
-      message.reaction('', event.messageID);
-      console.error('onChat Error:', error);
+
+      if (!videoUrl && url.includes("tiktok.com")) {
+        try {
+          const res = await axios.get(`https://tikwm.com/api/?url=${encodeURIComponent(url)}`);
+          videoUrl = res.data.data.play;
+          title = res.data.data.title;
+          source = "TikTok";
+        } catch (e) {}
+      }
+
+
+      if (!videoUrl) {
+        try {
+          const configRes = await axios.get("https://raw.githubusercontent.com/goatbotnx/Sexy-nx2.0Updated/refs/heads/main/nx-apis.json");
+          const apiUrl = configRes.data.autodl;
+          const res = await axios.get(`${apiUrl}/download?url=${encodeURIComponent(url)}`);
+          if (res.data && res.data.success) {
+            videoUrl = res.data.data.video_url || res.data.data.nowatermark || res.data.data.hd;
+            title = res.data.data.title;
+            source = res.data.data.source || "Social Media";
+          }
+        } catch (e) {}
+      }
+
+      if (!videoUrl) throw new Error("Could not fetch video from any API.");
+      
+      const stream = await axios.get(videoUrl, { 
+        responseType: 'stream',
+        headers: { 
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+          'Accept': '*/*'
+        },
+        timeout: 60000 
+      });
+
+      const time = ((Date.now() - start) / 1000).toFixed(2);
+      const xalmanBody = 
+        `『 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥 』\n` +
+        `━━━━━━━━━━━━━━━━━━\n` +
+        `📝 𝗧𝗶𝘁𝗹𝗲: ${title || "𝗡𝗼 𝗧𝗶𝘁𝗲𝗹"}\n` +
+        `🌐 𝗣𝗹𝗮𝘁𝗳𝗼𝗿𝗺: ${source.toUpperCase()}\n` +
+        `⏱️ 𝗧𝗶𝗺𝗲: ${time}s\n` +
+        `👨‍💻 Dev: xalman` +
+        `━━━━━━━━━━━━━━━━━━`;
+
+      await message.reply({
+        body: xalmanBody,
+        attachment: stream.data
+      });
+
+      if (api.setMessageReaction) api.setMessageReaction("☑️", messageID, () => {}, true);
+
+    } catch (e) {
+      console.error("Download Error:", e.message);
+      if (api.setMessageReaction) api.setMessageReaction("❗", messageID, () => {}, true);
     }
-  },
+  }
 };
