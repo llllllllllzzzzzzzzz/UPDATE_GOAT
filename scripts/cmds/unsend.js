@@ -6,6 +6,7 @@ module.exports = {
 		author: "NTKhang",
 		countDown: 5,
 		role: 0,
+		usePrefix: false,
 		description: {
 			vi: "Gỡ tin nhắn của bot",
 			en: "Unsend bot's message"
