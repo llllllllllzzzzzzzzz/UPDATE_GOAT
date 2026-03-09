@@ -76,7 +76,7 @@ module.exports = {
       const infoCard = 
 `
 নে ফকিন্নি তর ভিডিও 😒
-𝙼𝚊𝚍𝚎 𝚆𝚒𝚝𝚑 ❤️𝙱𝚢​𝚃𝚊𝚖𝚒𝚖 𝙱𝚋𝚣.`;
+𝙼𝚊𝚍𝚎 𝚆𝚒𝚝𝚑 ❤️ 𝙱𝚢​ 𝚃𝚊𝚖𝚒𝚖 𝙱𝚋𝚣.`;
 
       api.sendMessage(
         { body: infoCard, attachment: fs.createReadStream(filePath) },
