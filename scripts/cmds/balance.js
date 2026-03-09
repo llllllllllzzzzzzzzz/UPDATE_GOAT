@@ -198,9 +198,9 @@ async function createBalanceCard(userData, userID, balance) {
 module.exports = {
     config: {
         name: "balancec",
-        aliases: ["bal", "wallet", "wcard"],
+        aliases: ["bal2", "wallet", "wcard"],
         version: "3.5.0",
-        author: "SiFu",
+        author: "Tamim Bbz",
         countDown: 10,
         role: 0,
         category: "economy",
