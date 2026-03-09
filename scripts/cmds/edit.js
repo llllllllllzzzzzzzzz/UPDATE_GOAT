@@ -16,7 +16,7 @@ async function urlToBase64(url) {
 
 module.exports = {
   config: {
-    name: "edit",
+    name: "editpro",
     version: "1.0",
     author: "Saimx69x",// 𝗙𝗶𝘅𝗲𝗱 𝗯𝘆 𝗧𝗮𝗺𝗶𝗺 𝗕𝗯𝘇
     countDown: 5,
@@ -24,7 +24,7 @@ module.exports = {
     role: 0,
     shortDescription: "Edit an image using text prompt",
     longDescription: "Only edits an existing image. Must reply to an image.",
-    guide: "{p}edit <prompt> (reply to an image)"
+    guide: "{p}editpro <prompt> (reply to an image)"
   },
 
   onStart: async function ({ api, event, args, message }) {
