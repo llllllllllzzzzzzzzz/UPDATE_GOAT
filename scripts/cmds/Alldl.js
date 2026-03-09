@@ -91,13 +91,10 @@ module.exports = {
 
       const time = ((Date.now() - start) / 1000).toFixed(2);
       const xalmanBody = 
-        `『 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥 』\n` +
-        `━━━━━━━━━━━━━━━━━━\n` +
-        `📝 𝗧𝗶𝘁𝗹𝗲: ${title || "𝗡𝗼 𝗧𝗶𝘁𝗲𝗹"}\n` +
+        `『 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥 \n` +
+        `📝 𝗧𝗶𝘁𝗹𝗲:" এতো বড়ো title তর আব্বা নি দিবো"}\n` +
         `🌐 𝗣𝗹𝗮𝘁𝗳𝗼𝗿𝗺: ${source.toUpperCase()}\n` +
-        `⏱️ 𝗧𝗶𝗺𝗲: ${time}s\n` +
-        `👨‍💻 Dev: xalman` +
-        `━━━━━━━━━━━━━━━━━━`;
+        `👨‍💻 Dev: Tamim Bbz`;
 
       await message.reply({
         body: xalmanBody,
