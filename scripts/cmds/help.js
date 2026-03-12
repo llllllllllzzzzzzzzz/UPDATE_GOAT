@@ -101,6 +101,7 @@ module.exports = {
           `🗂️ 𝗖𝗮𝘁𝗲𝗴𝗼𝗿𝘆: ${category || "Uncategorized"}\n\n` +
           `📄 𝗗𝗲𝘀𝗰𝗲𝗿𝗶𝗽𝘁𝗶𝗼𝗻: ${desc}\n\n` +
           `🧩 𝗔𝗹𝗶𝗮𝘀𝗲𝘀: ${aliases?.length ? aliases.join(", ") : "None"}\n\n` +
+          `🔃 𝗙𝗶𝘅𝗲𝗱:  𝗯𝘆 𝗧𝗮𝗺𝗶𝗺 𝗕𝗯𝘇\n\n` +
           `🎀 𝗨𝘀𝗮𝗴𝗲: ${usage}\n\n` +
           `⚙️ 𝗩𝗲𝗿𝘀𝗶𝗼𝗻: ${version || "1.0"}`
       );
