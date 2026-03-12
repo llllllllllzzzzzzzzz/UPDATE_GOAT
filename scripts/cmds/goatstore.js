@@ -6,10 +6,10 @@ const GoatStor = "https://goatstore.vercel.app";
 module.exports = {
   config: {
     name: "goatstore",
-    aliases: ["gs", "market", "cmdstore", " goatstore"],
+    aliases: ["gs", "market", "cmdstore"],
     version: "0.0.1",
     role: 2,
-    author: "ArYAN",// 𝗙𝗶𝘅𝗲𝗱 𝗯𝘆 𝗧𝗮𝗺𝗶𝗺 𝗕𝗯𝘇
+    author: "ArYAN",
     shortDescription: {
       en: "📌 Goatstore - Your Command Marketplace"
     },
@@ -22,8 +22,8 @@ module.exports = {
 
   onStart: async ({ api, event, args, message }) => {
     const sendBeautifulMessage = (content) => {
-      const header = "🐐𝙶𝚘𝚊𝚝𝚂𝚝𝚘𝚛𝚎 \n";
-      const footer = "\n";
+      const header = "╭──『 🐐GoatStore 』──╮\n";
+      const footer = "\n╰──────────────╯";
       return message.reply(header + content + footer);
     };
 
@@ -31,14 +31,14 @@ module.exports = {
       if (!args[0]) {
         return sendBeautifulMessage(
           "\n" +
-          `╭─❯ ${event.body} 𝚜𝚑𝚘𝚠 <ID>\n├ 📦 Get command code\n╰ Example: show 1\n\n` +
-          `╭─❯ ${event.body} 𝚙𝚊𝚐𝚎 <number>\n├ 📄 Browse commands\n╰ Example: page 1\n\n` +
-          `╭─❯ ${event.body} 𝚜𝚎𝚊𝚛𝚌𝚑 <query>\n├ 🔍 Search commands\n╰ Example: search music\n\n` +
-          `╭─❯ ${event.body} 𝚝𝚛𝚎𝚗𝚍𝚒𝚗𝚐\n├ 🔥 View trending\n╰ Most popular commands\n\n` +
-          `╭─❯ ${event.body} 𝚜𝚝𝚊𝚝𝚞𝚜\n├ 📊 View statistics\n╰ Marketplace insights\n\n` +
-          `╭─❯ ${event.body} 𝚕𝚒𝚔𝚎 <ID>\n├ 💝 Like a command\n╰ Example: like 1\n\n` +
-          `╭─❯ ${event.body} 𝚞𝚙𝚕𝚘𝚊𝚍 <name>\n├ ⬆️ Upload command\n╰ Example: upload goatStor\n\n` +
-          "💫 𝗧𝗶𝗽: 𝚄𝚜𝚎 `𝚑𝚎𝚕𝚙 𝚐𝚘𝚊𝚝𝚜𝚝𝚘𝚛𝚎` 𝙵𝚘𝚛 𝙳𝚎𝚝𝚎𝚊𝚕𝚜𝚎"
+          `╭─❯ ${event.body} show <ID>\n├ 📦 Get command code\n╰ Example: show 1\n\n` +
+          `╭─❯ ${event.body} page <number>\n├ 📄 Browse commands\n╰ Example: page 1\n\n` +
+          `╭─❯ ${event.body} search <query>\n├ 🔍 Search commands\n╰ Example: search music\n\n` +
+          `╭─❯ ${event.body} trending\n├ 🔥 View trending\n╰ Most popular commands\n\n` +
+          `╭─❯ ${event.body} status\n├ 📊 View statistics\n╰ Marketplace insights\n\n` +
+          `╭─❯ ${event.body} like <ID>\n├ 💝 Like a command\n╰ Example: like 1\n\n` +
+          `╭─❯ ${event.body} upload <name>\n├ ⬆️ Upload command\n╰ Example: upload goatStor\n\n` +
+          "💫 𝗧𝗶𝗽: Use `Help GoatStore` For Details"
         );
       }
 
@@ -75,7 +75,7 @@ module.exports = {
             `├ 📝 𝗗𝗲𝘀𝗰𝗿𝗶𝗽𝘁𝗶𝗼𝗻: ${item.description}\n` +
             `├ 👀 𝗩𝗶𝗲𝘄𝘀: ${item.views}\n` +
             `├ 💝 𝗟𝗶𝗸𝗲𝘀: ${item.likes}\n` +
-            `╰ 👨‍💻 𝗔𝘂𝘁𝗵𝗼𝗿: ${item.authorName} | 𝗙𝗶𝘅𝗲𝗱 𝗯𝘆 𝗧𝗮𝗺𝗶𝗺 𝗕𝗯𝘇
+            `╰ 👨‍💻 𝗔𝘂𝘁𝗵𝗼𝗿: ${item.authorName}\n`
           ).join("\n");
           return sendBeautifulMessage(`\n📄 𝗣𝗮𝗴𝗲 ${page}/${totalPages}\n\n${itemsList}`);
         }
@@ -92,7 +92,7 @@ module.exports = {
             `├ ⚙️ 𝗧𝘆𝗽𝗲: ${item.type}\n` +
             `├ 👀 𝗩𝗶𝗲𝘄𝘀: ${item.views}\n` +
             `├ 💝 𝗟𝗶𝗸𝗲𝘀: ${item.likes}\n` +
-            `╰ 👨‍💻 𝗔𝘂𝘁𝗵𝗼𝗿: ${item.authorName} | 𝗙𝗶𝘅𝗲𝗱 𝗯𝘆 𝗧𝗮𝗺𝗶𝗺 𝗕𝗯𝘇
+            `╰ 👨‍💻 𝗔𝘂𝘁𝗵𝗼𝗿: ${item.authorName}\n`
           ).join("\n");
           return sendBeautifulMessage(`\n📝 Query: "${query}"\n\n${searchList}`);
         }
@@ -121,17 +121,17 @@ module.exports = {
             `${i + 1}. ${v.itemName} 𝗜𝗗: ${v.itemID}\n 𝗩𝗶𝗲𝘄𝘀: ${v.views}`
           ).join('\n\n');
           return sendBeautifulMessage(
-            `\n╭─❯ 📦 𝚃𝚘𝚝𝚊𝚕 𝙲𝚘𝚖𝚖𝚊𝚗𝚍𝚜: ${totalCommands}\n` +
-            `├─❯ 💝 𝚃𝚘𝚝𝚊𝚕 𝙻𝚒𝚔𝚎: ${totalLikes}\n` +
-            `├─❯ 👥 𝙳𝚊𝚒𝚕𝚢 𝚄𝚜𝚎𝚍: ${dailyActiveUsers}\n` +
-            `╰─❯ ⏰ 𝚄𝚙𝚝𝚒𝚖𝚎: ${uptimeStr}\n\n` +
-            `══『 🌟 𝚃𝚘 𝙰𝚞𝚝𝚑𝚘𝚛𝚜』══\n╰${authorList}\n\n` +
+            `\n╭─❯ 📦 Total Commands: ${totalCommands}\n` +
+            `├─❯ 💝 Total Liks: ${totalLikes}\n` +
+            `├─❯ 👥 Daily Users: ${dailyActiveUsers}\n` +
+            `╰─❯ ⏰ Uptime: ${uptimeStr}\n\n` +
+            `══『 🌟 Top Authors 』══\n╰${authorList}\n\n` +
             `══『 🔥 Most Viewed 』══\n╰${viewedList}\n` +
             `      🌐 𝗛𝗼𝘀𝘁𝗶𝗻𝗴 𝗜𝗻𝗳𝗼\n` +
-            `╭─❯ 💻 𝚜𝚢𝚜𝚝𝚎𝚖\n` +
+            `╭─❯ 💻 𝗦𝘆𝘀𝘁𝗲𝗺\n` +
             `├ 🔧 ${hosting.system.platform} (${hosting.system.arch})\n` +
-            `├ 📌 𝙽𝚘𝚍𝚎 ${hosting.system.nodeVersion}\n` +
-            `╰ 🖥️ 𝙲𝙿𝚄 𝙲𝚘𝚛𝚎: ${hosting.system.cpuCores}`
+            `├ 📌 Node ${hosting.system.nodeVersion}\n` +
+            `╰ 🖥️ CPU Cores: ${hosting.system.cpuCores}`
           );
         }
 
@@ -176,7 +176,7 @@ module.exports = {
                 `╭─❯ ✅ 𝗦𝘁𝗮𝘁𝘂𝘀\n╰ command uploaded successfully\n\n` +
                 `╭─❯ 👑 𝗡𝗮𝗺𝗲\n╰ ${uploadData.itemName}\n\n` +
                 `╭─❯ 🆔 𝗜𝗗\n╰ ${itemID}\n\n` +
-                `╭─❯ 👨‍💻 𝗔𝘂𝘁𝗵𝗼𝗿\n╰ ${uploadData.authorName} | 𝗙𝗶𝘅𝗲𝗱 𝗯𝘆 𝗧𝗮𝗺𝗶𝗺 𝗕𝗯𝘇`
+                `╭─❯ 👨‍💻 𝗔𝘂𝘁𝗵𝗼𝗿\n╰ ${uploadData.authorName}\n\n`  +
                 `╭─❯ 🔗 𝗥𝗮𝘄 𝗟𝗶𝗻𝗸\n╰ ${link}`
               );
             }
