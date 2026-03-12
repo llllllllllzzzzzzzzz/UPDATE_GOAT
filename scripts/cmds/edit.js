@@ -16,7 +16,7 @@ async function urlToBase64(url) {
 
 module.exports = {
   config: {
-    name: "editpro",
+    name: "edit",
     version: "1.0",
     author: "Saimx69x",// 𝗙𝗶𝘅𝗲𝗱 𝗯𝘆 𝗧𝗮𝗺𝗶𝗺 𝗕𝗯𝘇
     countDown: 5,
