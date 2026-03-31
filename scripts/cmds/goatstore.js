@@ -23,7 +23,7 @@ module.exports = {
   onStart: async ({ api, event, args, message }) => {
     const sendBeautifulMessage = (content) => {
       const header = "╭──『 🐐GoatStore 』──╮\n";
-      const footer = "\n╰──────────────╯";
+      const footer = "";
       return message.reply(header + content + footer);
     };
 
